@@ -5,7 +5,13 @@ This is an experiment that will try to implement a simple REST backend that uses
 - It will be based on Sinatra because Sinatra appears to support simple REST setups well.
 - The basic CRUD operations will allow client-side javascript, which is properly authenticated, to interact with the local filesystem
 
-##Simplest Slice
-- The simplest implementation will allow for a single or maybe 2 functions with no authentication (or basic HTTP, if at all)
-- Then, maybe add some simple JS that interacts with it
+##The Vision (so far)
+Cozy intends to be a static RESTful backend that is general enough to support a number of clients. It is also quite experimental and is meant to be an exploration of ideas. It's a self-educational safari into the wild jungles of web frameworks, if you will.
 
+##ToDo
+
+- <del>make a simple read function with an associated model that interacts with the filesystem</del>
+- <del>complete the basic CRUD operations</del>
+- build some simple POST forms, at least for the update action (maybe split this off into a client that remains separate?)
+- explore some clientside JS in this new client (backbone.js? probably not even that)
+- AUTH!
