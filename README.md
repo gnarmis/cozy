@@ -14,4 +14,10 @@ Cozy intends to be a static RESTful backend that is general enough to support a 
 - <del>complete the basic CRUD operations</del>
 - build some simple POST forms, at least for the update action (maybe split this off into a client that remains separate?)
 - explore some clientside JS in this new client (backbone.js? probably not even that)
-- AUTH!
+- <del>AUTH!</del> Added some basic Digest auth (run it over SSL)
+
+##How to Run
+
+Make sure you have the required gems and then run:
+
+	rackup -p 4567
