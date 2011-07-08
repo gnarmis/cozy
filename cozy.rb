@@ -8,31 +8,55 @@ ROOT_DIR = Dir.pwd+'/public'
 
 require 'sinatra/base'
 
-class Protected < Sinatra::Base
-
-  # create a new node
-  get '/node/new/:name' do
-    @node = Node.new(params[:name])
-    @node.create(@node.filename)
-    "I created a new node called \'#{@node.name}\'"
+module Helpers
+  def find_parent(type)
+    parent = ROOT_DIR
+    !(type == 'root') ? parent = File.join(ROOT_DIR,type) : nil
+    parent
   end
+end
 
+class Cozy < Sinatra::Base
+  include Helpers
+end
+
+class Protected < Cozy
+  
+  # create a new node
+  get '/node/c/:type/:node' do
+    parent = find_parent params[:type]
+    @node = Node.new(params[:node], parent)
+    @node.create
+    "Created node \'#{@node.name}\' of type \'#{@node.type}\'"
+  end
 
 
   # update a node
-  get '/node/update/:name/:content' do
-    filename = File.join(ROOT_DIR, params[:name])
-    @node = Node.find(params[:name])
-    @node.update filename, params[:content]
-    "I updated the node \'#{@node.name}\'"
+  get '/node/u/:type/:node/:content' do
+    parent = find_parent params[:type]
+    @node = Node.new(params[:node], parent)
+    @node = Node.find(@node)
+    unless @node.nil?
+      @node.update File.join(parent,params[:node]), params[:content]
+      "Updated node \'#{@node.name}\' of type \'#{@node.type}\'"
+    else
+      "Node \'#{params[:node]}\' of type \'#{params[:type]}\' not found."
+    end
+    
   end
 
   # delete a node
-  get '/node/delete/:name' do
-    filename = File.join(ROOT_DIR, params[:name])
-    @node = Node.find(params[:name])
-    @node.delete filename
-    "I deleted the node \'#{@node.name}\'"
+  get '/node/d/:type/:node' do
+    parent = find_parent params[:type]
+    @node = Node.new(params[:node], parent)
+    @node = Node.find(@node)
+    unless @node.nil?
+      @node.delete File.join(parent, params[:node])
+      Node.delete_parent_if_empty! parent  
+      "Deleted node \'#{@node.name}\' of type \'#{@node.type}\'"
+    else
+      "Node \'#{params[:node]}\' of type \'#{params[:type]}\' not found."
+    end
   end
 
   def self.app
@@ -45,17 +69,17 @@ class Protected < Sinatra::Base
   end
 end
 
-class Public < Sinatra::Base
-
+class Public < Cozy
+  
   get '/' do
     erb :hello_world
   end
   
   # read a node
-  get '/node/:name' do
-    filename = File.join(ROOT_DIR, params[:name])
+  get 'api/node/r/:name' do
+    path = File.join(ROOT_DIR, params[:name])
     @node = Node.find(params[:name])
-    @node.read filename
+    @node.read path
   end
 
 end

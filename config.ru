@@ -4,5 +4,5 @@ require 'cozy'
  
 run Rack::URLMap.new({
   "/" => Public.new,
-  "/api" => Protected.app
+  "/" => Protected.app
 })

@@ -1,42 +1,60 @@
 require 'fileutils'
 
-class Node < Object
-  attr_reader :name, :filename, :read, :update, :delete
-
+class Node
+  attr_accessor :name, :path, :type, :parent#, :read, :update, :delete
+  
   include FileUtils
   
-  def initialize(name)
+  def initialize(name, dir=ROOT_DIR)
     @name ||= name
-    @filename = File.join(ROOT_DIR, @name)
+    @type = (dir.split '/').last
+    @parent = dir
+    @path = File.join(dir, @name)
   end
   
-  def create(filename)
-    touch filename
+  def create
+    if Dir.exists? self.parent
+      touch self.path
+    else
+      mkdir self.parent
+      touch self.path
+    end
   end
   
-  def read(filename)
-    if File.exists? filename
-      content = File.open(filename, 'r')
+  def read(path)
+    if File.exists? path
+      content = File.open(path, 'r')
     else
       "Not Found"
     end
   end
   
-  def update(filename, newcontent='')
-    File.open(filename, 'w') {|f| f.write(newcontent)}
+  def update(path, newcontent='')
+    File.open(path, 'w') {|f| f.write(newcontent)}
   end
   
-  def delete(filename)
-    rm filename
+  def delete(path)
+    if File.exists? path
+      rm path
+    else
+      "Not Found"
+    end
   end
   
-  def self.find(name)
-    entries = Dir.entries(ROOT_DIR)
-    if entries.member? name
-      Node.new(name)
+  def self.find(node)
+    entries = []
+    entries = Dir.entries(node.parent) if Dir.exists? node.parent
+    if entries.member? node.name
+      Node.new(node.name)
     else
       nil
     end
   end
   
+  def self.delete_parent_if_empty!(parent_path)
+    puts Dir.entries(parent_path)
+    if Dir.entries(parent_path).join == "..."
+      FileUtils::rmdir parent_path
+    end
+  end
 end
