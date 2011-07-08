@@ -25,7 +25,7 @@ class Node
     if File.exists? path
       content = File.open(path, 'r')
     else
-      "Not Found"
+      nil
     end
   end
   
