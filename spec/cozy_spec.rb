@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/spec_helper'
+require 'fileutils'
 
 describe "Cozy" do
   include Rack::Test::Methods
@@ -41,5 +42,35 @@ describe "Cozy" do
     get '/node/c/example/example'
     get '/node/r/example/example'
     last_response.status.should == 200
+  end
+  
+  # the following tests are for the refactored code
+  
+  it "should respond to /types" do
+    get '/types'
+    last_response.status.should == 200
+  end
+  
+  it "should respond to /nodes" do
+    get '/nodes'
+    last_response.status.should == 200
+  end
+  
+  it "should return array as a string with all types for GET /types" do
+    FileUtils::mkdir File.join(ROOT_DIR,'a')
+    FileUtils::mkdir File.join(ROOT_DIR,'b')
+    FileUtils::touch File.join(ROOT_DIR,'b/foo.html')
+    FileUtils::touch File.join(ROOT_DIR,'bar.html')
+    get '/types'
+    last_response.body.should == '["a", "b"]'
+  end
+  
+  it "should return hash as a string with all nodes for GET /nodes" do
+    FileUtils::mkdir File.join(ROOT_DIR,'a')
+    FileUtils::mkdir File.join(ROOT_DIR,'b')
+    FileUtils::touch File.join(ROOT_DIR,'b/foo.html')
+    FileUtils::touch File.join(ROOT_DIR,'bar.html')
+    get '/nodes'
+    last_response.body.should == '{"root"=>["bar.html"], "b"=>["foo.html"]}'    
   end
 end

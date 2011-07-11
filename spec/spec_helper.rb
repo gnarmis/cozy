@@ -8,6 +8,8 @@ require 'rspec'
 # set test environment
 set :environment, :test
 
+ROOT_DIR = Dir.pwd+'/public'
+
 def clean!
   pubdir = ROOT_DIR #defined in cozy.rb
   FileUtils.rm_rf pubdir

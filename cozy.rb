@@ -1,4 +1,5 @@
-require File.dirname(__FILE__) + '/node'
+$:.unshift File.expand_path(File.dirname(__FILE__))
+require 'node'
 require 'rubygems'
 require 'sinatra'
 require 'fileutils'
@@ -27,7 +28,23 @@ helpers do
   end
 end
 
+# Code refactoring: use HTTP verbs for CRUD operations to make it actually RESTful
+# Also, rspec can be used to document behavior of REST requests, and drive future dev
 
+# the following is the refactored code
+
+# get index of all types
+get '/types' do
+  Node.get_types.to_s
+end
+
+# get index of all nodes
+
+get '/nodes' do
+  Node.get_nodes.to_s
+end
+
+# the following is older code that needs to be refactored
 
 # create a new node
 get '/node/c/:type/:node' do
