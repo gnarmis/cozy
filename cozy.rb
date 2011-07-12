@@ -69,13 +69,26 @@ end
 # update an existing node
 put '/nodes' do
   protected!
-  puts params[:type], params[:node], params[:content]
   parent = find_parent params[:type]
   @node = Node.new(params[:node], parent)
   @node = Node.find(@node)
   unless @node.nil?
     @node.update File.join(parent,params[:node]), params[:content]
     "Updated node \'#{@node.name}\' of type \'#{@node.type}\'"
+  else
+    "Node \'#{params[:node]}\' of type \'#{params[:type]}\' not found."
+  end
+end
+
+delete '/nodes' do
+  protected!
+  parent = find_parent params[:type]
+  @node = Node.new(params[:node], parent)
+  @node = Node.find(@node)
+  unless @node.nil?
+    @node.delete File.join(parent, params[:node])
+    Node.delete_parent_if_empty! parent  
+    "Deleted node \'#{@node.name}\' of type \'#{@node.type}\'"
   else
     "Node \'#{params[:node]}\' of type \'#{params[:type]}\' not found."
   end
