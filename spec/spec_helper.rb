@@ -7,8 +7,7 @@ require 'rspec'
 
 # set test environment
 set :environment, :test
-
-ROOT_DIR = Dir.pwd+'/public'
+# other constants defined in cozy.rb
 
 def clean!
   pubdir = ROOT_DIR #defined in cozy.rb

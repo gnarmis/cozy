@@ -46,12 +46,12 @@ describe "Cozy" do
   
   # the following tests are for the refactored code
   
-  it "should respond to /types" do
+  it "should respond to GET /types" do
     get '/types'
     last_response.status.should == 200
   end
   
-  it "should respond to /nodes" do
+  it "should respond to GET /nodes" do
     get '/nodes'
     last_response.status.should == 200
   end
@@ -72,5 +72,26 @@ describe "Cozy" do
     FileUtils::touch File.join(ROOT_DIR,'bar.html')
     get '/nodes'
     last_response.body.should == '{"root"=>["bar.html"], "b"=>["foo.html"]}'    
+  end
+  
+  it "should respond to GET /nodes/:type/:node" do
+    FileUtils::mkdir File.join(ROOT_DIR,'b')
+    FileUtils::touch File.join(ROOT_DIR,'b/foo.html')
+    get '/nodes/b/foo.html'
+    last_response.status.should == 200
+  end
+  
+  it "should return specified node for GET /nodes/:type/:node" do
+    FileUtils::mkdir File.join(ROOT_DIR,'b')
+    FileUtils::touch File.join(ROOT_DIR,'b/foo.html')
+    File.open(File.join(ROOT_DIR,'b/foo.html'), 'w') {|f| f.write('new content')}
+    get '/nodes/b/foo.html'
+    last_response.body.should == 'new content'
+  end
+  
+  it "should successfully create a new node for POST /nodes" do
+    authorize USERNAME, PASSWORD
+    post '/nodes', {:type=>"root", :node => "foo.html"}
+    last_response.status.should == 200
   end
 end

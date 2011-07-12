@@ -1,11 +1,13 @@
 $:.unshift File.expand_path(File.dirname(__FILE__))
 require 'node'
 require 'rubygems'
+require 'haml'
 require 'sinatra'
 require 'fileutils'
 
 ROOT_DIR = Dir.pwd+'/public'
-
+USERNAME = 'cozy'
+PASSWORD = 'cozy'
 require 'sinatra/base'
 
 helpers do
@@ -18,7 +20,7 @@ helpers do
 
   def authorized?
     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-    @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == ['admin', 'admin']
+    @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == ['cozy', 'cozy']
   end
   
   def find_parent(type)
@@ -39,9 +41,29 @@ get '/types' do
 end
 
 # get index of all nodes
-
 get '/nodes' do
   Node.get_nodes.to_s
+end
+
+# get a specific node
+get '/nodes/:type/:node' do
+  parent = find_parent params[:type]
+  @node = Node.new(params[:node], parent)
+  @node = Node.find(@node)
+  unless @node.nil?
+    @node.read File.join(parent,params[:node])
+  else
+    "Node \'#{params[:node]}\' of type \'#{params[:type]}\' not found."
+  end
+end
+
+# create a node
+post '/nodes' do
+  protected!
+  parent = find_parent params[:type]
+  @node = Node.new(params[:node], parent)
+  @node.create
+  "Created node \'#{@node.name}\' of type \'#{@node.type}\'"
 end
 
 # the following is older code that needs to be refactored
