@@ -30,10 +30,6 @@ helpers do
   end
 end
 
-# Code refactoring: use HTTP verbs for CRUD operations to make it actually RESTful
-# Also, rspec can be used to document behavior of REST requests, and drive future dev
-
-# the following is the refactored code
 
 # get index of all types
 get '/types' do
@@ -80,6 +76,7 @@ put '/nodes' do
   end
 end
 
+# delete an existing node
 delete '/nodes' do
   protected!
   parent = find_parent params[:type]
@@ -94,70 +91,23 @@ delete '/nodes' do
   end
 end
 
-# the following is older code that needs to be refactored
-
-# create a new node
-get '/node/c/:type/:node' do
-  protected!
-  parent = find_parent params[:type]
-  @node = Node.new(params[:node], parent)
-  @node.create
-  "Created node \'#{@node.name}\' of type \'#{@node.type}\'"
-end
-
-
-# update a node
-get '/node/u/:type/:node/:content' do
-  protected!
-  parent = find_parent params[:type]
-  @node = Node.new(params[:node], parent)
-  @node = Node.find(@node)
-  unless @node.nil?
-    @node.update File.join(parent,params[:node]), params[:content]
-    "Updated node \'#{@node.name}\' of type \'#{@node.type}\'"
-  else
-    "Node \'#{params[:node]}\' of type \'#{params[:type]}\' not found."
-  end
-  
-end
-
-# delete a node
-get '/node/d/:type/:node' do
-  protected!
-  parent = find_parent params[:type]
-  @node = Node.new(params[:node], parent)
-  @node = Node.find(@node)
-  unless @node.nil?
-    @node.delete File.join(parent, params[:node])
-    Node.delete_parent_if_empty! parent  
-    "Deleted node \'#{@node.name}\' of type \'#{@node.type}\'"
-  else
-    "Node \'#{params[:node]}\' of type \'#{params[:type]}\' not found."
-  end
-end
-
-# def self.app
-#   app = Rack::Auth::Digest::MD5.new(Protected.new) do |username|
-#     {'admin' => 'password'}[username]
-#   end
-#   app.realm = 'Protected Area'
-#   app.opaque = '07BDF0170AC2300BA73EF346B581D544'
-#   app
-# end
-
-
+# default route
 get '/' do
-  "Hello World!"
+  redirect '/nodes/index.html'
 end
 
-# read a node
-get '/node/r/:type/:node' do
-  parent = find_parent params[:type]
-  @node = Node.new(params[:node], parent)
-  @node = Node.find(@node)
-  unless @node.nil?
-    @node.read File.join(parent,params[:node])
-  else
-    "Node \'#{params[:node]}\' of type \'#{params[:type]}\' not found."
-  end
+# the JS client will load here
+get '/admin' do
+  protected!
+  haml :admin
 end
+
+get '/:type/:node' do
+  redirect '/nodes/:type/:node'
+end
+
+get '/:node' do
+  redirect '/nodes/:node'
+end
+
+

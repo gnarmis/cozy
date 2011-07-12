@@ -22,6 +22,5 @@ RSpec.configure do |config|
   config.before(:each) { clean! }
   config.after(:each) do
     clean!
-    FileUtils::rmdir TEST_DIR
   end
 end
