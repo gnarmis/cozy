@@ -94,4 +94,15 @@ describe "Cozy" do
     post '/nodes', {:type=>"root", :node => "foo.html"}
     last_response.status.should == 200
   end
+  
+  it "should successfully update an existing node for PUT /nodes/:type/:node" do
+    authorize USERNAME, PASSWORD
+    FileUtils::touch File.join(ROOT_DIR,'foo.html')
+    File.open(File.join(ROOT_DIR,'foo.html'), 'w') {|f| f.write('old content')}
+    put '/nodes', {:type => "root", :node => "foo.html", :content => "new content"}
+    last_response.status.should == 200
+    last_response.body.should == "Updated node 'foo.html' of type 'public'"
+    get '/nodes/root/foo.html'
+    last_response.body.should == "new content"
+  end
 end
