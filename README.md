@@ -1,9 +1,15 @@
 #Cozy
 
-This is an experiment that will try to implement a simple REST backend that uses the local filesystem for persistence.
+Cozy is a simple REST backend that uses the local filesystem for persistence. There is also a simple JS client (in development) to interact with this layer.
 
 - Based on Sinatra
 - The basic CRUD operations allow client-side javascript, which is properly authenticated, to interact with the local filesystem
+
+##Cozy CMS?
+
+There are several great solutions in the "light CMS" category, like Perch, Unify, Pulse, etc. There is some scope for a light CMS that leaves your static site completely unchanged and pluggable, while exposing a browser-based interface if needed. With the other solutions, you need to at the very least add some CSS attributes on the DIV you want to edit, and not all of them support adding/removing files. This is a niche Cozy CMS could fill.
+
+Basically, Cozy CMS could allow for any static site to be developed and be worked on using a browser-based client and then Cozy CMS could be discarded, leaving only the contents of the public/ folder.
 
 ##REST API
 The API is in flux right now, but here are the current routes. Check spec/cozy_spec.rb for a closer look at the functionality tests and of course cozy.rb for just the routes.
@@ -18,12 +24,7 @@ The API is in flux right now, but here are the current routes. Check spec/cozy_s
 	POST '/nodes', params[:type, :node] 					=> create a node
 	PUT '/nodes', params[:type, :node, :content] 	=> update a node
 	DELETE '/nodes', params[:type, :node] 				=> delete a node
-	
-	
-
-##The Vision (so far)
-Cozy intends to be a static RESTful backend that is general enough to support a number of clients. It is also quite experimental and is meant to be an exploration of ideas. It's a self-educational safari into the wild jungles of web frameworks, if you will.
-
+ 
 ##ToDo
 
 - <del>make a simple read function with an associated model that interacts with the filesystem</del>
